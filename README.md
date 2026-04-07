@@ -419,8 +419,15 @@ printf("Heap allocated: %d bytes\n", heap_get_allocated());
 qemu-system-x86_64 -cdrom myos.iso -trace events=/tmp/trace-events
 ```
 ```
+# Install dependencies (Ubuntu/Debian)
+sudo apt-get install gcc make grub-pc-bin grub-common xorriso qemu-system-x86
 
-This README provides comprehensive documentation covering installation, usage, architecture, debugging, and extending the OS. It's structured to be useful for both beginners learning OS development and experienced developers who want to understand the implementation details.
+# Build and run
+chmod +x run.sh
+./run.sh
+
+
+.
 #!/bin/bash
 make clean
 make all
