@@ -421,3 +421,7 @@ qemu-system-x86_64 -cdrom myos.iso -trace events=/tmp/trace-events
 ```
 
 This README provides comprehensive documentation covering installation, usage, architecture, debugging, and extending the OS. It's structured to be useful for both beginners learning OS development and experienced developers who want to understand the implementation details.
+#!/bin/bash
+make clean
+make all
+make run
