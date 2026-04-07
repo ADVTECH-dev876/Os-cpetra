@@ -1,0 +1,40 @@
+CFLAGS = -ffreestanding -nostdlib -nostartfiles -Wall -Wextra -I src -I boot
+CFLAGS += -m64 -mno-red-zone -fno-stack-protector -fno-pic
+CFLAGS += -O2 -g
+
+LDFLAGS = -ffreestanding -nostdlib -static -z max-page-size=0x1000
+
+ASM_SOURCES = $(wildcard src/kernel/*.S)
+C_SOURCES = $(wildcard src/kernel/*.c) $(wildcard src/lib/*.c)
+OBJECTS = $(ASM_SOURCES:.S=.o) $(C_SOURCES:.c=.o)
+
+ISO = myos.iso
+KERNEL = myos.bin
+
+.PHONY: all clean run
+
+all: $(ISO)
+
+$(KERNEL): $(OBJECTS)
+	gcc $(LDFLAGS) -T boot/linker.ld -o $@ $^
+
+%.o: %.S
+	gcc $(CFLAGS) -c -o $@ $<
+
+%.o: %.c
+	gcc $(CFLAGS) -c -o $@ $<
+
+$(ISO): $(KERNEL) boot/grub/grub.cfg
+	mkdir -p iso/boot/grub
+	cp $(KERNEL) iso/boot/
+	cp boot/grub/grub.cfg iso/boot/grub/
+	grub-mkrescue -o $@ iso/
+
+run: $(ISO)
+	qemu-system-x86_64 -cdrom $(ISO) -serial stdio -m 128M
+
+clean:
+	rm -f $(OBJECTS) $(KERNEL) $(ISO)
+	rm -rf iso/
+
+
